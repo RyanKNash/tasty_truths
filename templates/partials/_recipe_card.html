@@ -1,0 +1,79 @@
+{# Recipe Card Partial #}
+{# Usage: {% include 'partials/_recipe_card.html' %} with recipe object in context #}
+
+<article class="recipe-card">
+  <div class="recipe-card-image">
+    {% if recipe.image_filename %}
+    <img src="{{ url_for('static', filename=recipe.image_filename) }}" alt="{{ display_recipe_title(recipe) }}" />
+    {% else %}
+    <img src="{{ url_for('static', filename='assets/images/placeholder_recipe.png') }}" alt="{{ display_recipe_title(recipe) }}" />
+    {% endif %}
+  </div>
+
+  <div class="recipe-card-content">
+    <h3 class="recipe-card-title">{{ display_recipe_title(recipe) }}</h3>
+
+    {% if recipe.author %}
+    <div class="recipe-card-author" style="margin-bottom: 8px;">
+      <a href="{{ url_for('public_profile', username=recipe.author.username) }}" class="author-profile-link">
+        <img src="{{ avatar_url_for_user(recipe.author) }}" alt="{{ recipe.author.username }}'s profile picture" class="inline-avatar">
+        <span class="recipe-author">{{ recipe.author.username }}</span>
+      </a>
+    </div>
+    {% if current_user.is_authenticated and current_user.id != recipe.author.id %}
+      {% with target_user=recipe.author, next_url=request.full_path.rstrip('?'), add_button_class='button button-secondary', remove_button_class='button button-secondary' %}
+        {% include "partials/_friend_form.html" %}
+      {% endwith %}
+    {% endif %}
+    {% endif %}
+
+    {% if recipe.description %}
+    <p class="recipe-card-description">{{ recipe.description[:120] }}{% if recipe.description|length > 120 %}...{% endif %}</p>
+    {% else %}
+    <p class="recipe-card-description recipe-card-description-empty">No description available.</p>
+    {% endif %}
+
+    <!-- Cuisine and Prep Time Info -->
+    <div class="recipe-card-meta">
+      {% if recipe.cuisine %}
+      <span class="recipe-cuisine">{{ recipe.cuisine }}</span>
+      {% endif %}
+      
+      {% if recipe.prep_time_minutes %}
+      <span class="recipe-time">⏱ {{ recipe.prep_time_minutes }}m prep</span>
+      {% endif %}
+    </div>
+
+    <!-- Dietary Tags -->
+    {% if recipe.dietary_tags and recipe.dietary_tags|length > 0 %}
+    <div class="recipe-tags">
+      {% for tag in recipe.dietary_tags %}
+      <span class="tag badge-{{ tag|replace('-', '_') }}">{{ tag|title }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="recipe-card-footer">
+      <div class="recipe-card-rating">
+        {% if recipe.average_rating %}
+        <span class="rating-value">{{ recipe.average_rating|round(1) }}/5.0</span>
+        {% else %}
+        <span class="rating-empty">No ratings yet</span>
+        {% endif %}
+      </div>
+
+      {% if recipe.nutrition_totals %}
+      <div class="recipe-card-macros">
+        <span>{{ recipe.nutrition_totals.calories_kcal|round|int }} kcal</span>
+        <span>P {{ recipe.nutrition_totals.protein_g|round(1) }}g</span>
+        <span>C {{ recipe.nutrition_totals.carbs_g|round(1) }}g</span>
+        <span>F {{ recipe.nutrition_totals.fat_g|round(1) }}g</span>
+      </div>
+      {% endif %}
+
+      <a href="{{ url_for('recipe_detail', id_slug=recipe.id ~ '-' ~ recipe.slug) }}" class="recipe-card-link">
+        View Recipe
+      </a>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,169 @@
+{% extends "base.html" %} {% block title %}Tasty Truths — Home{% endblock %} {%
+block content %}
+<section class="hero container">
+  <div class="hero_left">
+    <h1>Tasty Truths</h1>
+    <p class="hero_tagline">
+      Real recipes from real people — no paywalls, no clutter.
+    </p>
+    <div class="hero_cta">
+      <div>
+        <a href="{{ url_for('signup') }}" class="button signup"
+          >Create your free account</a
+        >
+        <a href="{{ url_for('recipes') }}" class="button">Browse recipes</a>
+      </div>
+      <div class="hero_cta-secondary">
+        <a href="{{ url_for('random_recipe') }}" class="button button-secondary"
+          >Random recipe</a
+        >
+        <a href="{{ url_for('random_blog') }}" class="button button-secondary"
+          >Random blog</a
+        >
+      </div>
+    </div>
+    <ul class="hero_points">
+      <li>Community-curated, student-friendly</li>
+      <li>Short, focused recipe pages</li>
+      <li>Global flavors, local kitchens</li>
+    </ul>
+  </div>
+
+  <div class="hero_right">
+    <div class="hero_right_t_img">
+      <img
+        src="{{ url_for('static', filename='assets/images/fried_chicken.webp') }}"
+        class="wide"
+      />
+      <img
+        src="{{ url_for('static', filename='assets/images/ceviche.jpg') }}"
+      />
+      <img
+        src="{{ url_for('static', filename='assets/images/curry.jpeg') }}"
+        class="tall"
+      />
+      <img
+        src="{{ url_for('static', filename='assets/images/paella.jpg') }}"
+        class="big"
+      />
+      <img
+        src="{{ url_for('static', filename='assets/images/poutine.webp') }}"
+      />
+    </div>
+
+    <div class="hero_right_b">
+      <p>
+        Cook, share, and learn — a community recipe book built for students.
+      </p>
+    </div>
+  </div>
+            </section>
+
+<section class="home-preview-container">
+        <div class="home-blog-preview">
+          <p class="blog-pre-head">
+            Learn about other chef's cooking processes!
+          </p>
+          <div class="blog-pre-example">
+            <!-- Posts list (index page) -->
+            <section
+              class="post-list"
+              aria-label="Recent posts"
+              itemscope
+              itemtype="https://schema.org/Blog"
+            >
+              {% if featured_blog %}
+                <article
+                  class="post-card"
+                  itemprop="blogPost"
+                  itemscope
+                  itemtype="https://schema.org/BlogPosting"
+                >
+                  <header>
+                    <h2 itemprop="headline">
+                      <a href="{{ featured_blog.url }}" itemprop="url"
+                        >{{ featured_blog.title }}</a
+                      >
+                    </h2>
+                    {% if featured_blog.published_date or featured_blog.author_name %}
+                      <p class="post-meta">
+                        {% if featured_blog.published_date %}
+                          <time
+                            datetime="{{ featured_blog.published_iso }}"
+                            itemprop="datePublished"
+                            >{{ featured_blog.published_date }}</time
+                          >
+                        {% endif %}
+                        {% if featured_blog.author_name %}
+                          <span
+                            itemprop="author"
+                            itemscope
+                            itemtype="https://schema.org/Person"
+                          >
+                            <span itemprop="name"
+                              >{{ featured_blog.author_name }}</span
+                            >
+                          </span>
+                        {% endif %}
+                      </p>
+                    {% endif %}
+                  </header>
+                  {% if featured_blog.excerpt %}
+                    <p class="post-excerpt" itemprop="description">
+                      {{ featured_blog.excerpt }}
+                    </p>
+                  {% endif %}
+                  <p>
+                    <a class="read-more" href="{{ featured_blog.url }}"
+                      >Read more -></a
+                    >
+                  </p>
+                </article>
+              {% else %}
+                <p class="blog-placeholder">
+                  No blog posts yet. Check back soon.
+                </p>
+              {% endif %}
+</section>
+          </div>
+        </div>
+
+        <div class="home-recipe-preview">
+          <p class="recipe-pre-head">Just a sample of the exciting recipes!</p>
+          <div class="recipe-pre-example">
+            {% if featured_recipe %}
+              <article class="post-card">
+                <div class="card-body">
+                  <h3>
+                    <a href="{{ featured_recipe.url }}"
+                      >{{ featured_recipe.title }}</a
+                    >
+                  </h3>
+                  {% if featured_recipe.snippet %}
+                    <p>{{ featured_recipe.snippet }}</p>
+                  {% endif %}
+                  <p>
+                    <a class="read-more" href="{{ featured_recipe.url }}"
+                      >View full recipe -></a
+                    >
+                  </p>
+                </div>
+                {% if featured_recipe.image_url %}
+                  <div class="card-media">
+                    <img
+                      src="{{ featured_recipe.image_url }}"
+                      alt="{{ featured_recipe.title }}"
+                    />
+                  </div>
+                {% endif %}
+              </article>
+            {% else %}
+              <p class="recipe-placeholder">
+                No recipes yet. Be the first to share one!
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+{% endblock %}
